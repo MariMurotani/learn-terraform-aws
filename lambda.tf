@@ -29,8 +29,12 @@ resource "aws_lambda_function" "hello_world" {
   memory_size   = 128
   timeout       = 3
 
-  s3_bucket = aws_s3_bucket.lambda_code_bucket.bucket
-  s3_key    = "hello_world_function.zip"
+  # For S3 zip package
+  #s3_bucket = aws_s3_bucket.lambda_code_bucket.bucket
+  #s3_key    = "hello_world_function.zip"
+
+  package_type  = "Image"
+  image_uri     = "111122223333.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest" # fix me
 
   role = aws_iam_role.lambda_role.arn
 

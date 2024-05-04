@@ -25,3 +25,20 @@ resource "aws_api_gateway_integration" "hello_world_lambda_integration" {
   type        = "AWS_PROXY"
   uri         = aws_lambda_function.hello_world.invoke_arn
 }
+
+// API GatewayDeployment
+
+resource "aws_api_gateway_deployment" "hello_world_api_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.hello_world_api.id
+  stage_name  = "prod"  # デプロイステージの名前
+
+  # 以下のライフサイクルポリシーは、APIの変更があるたびに新しいデプロイメントを強制します。
+  lifecycle {
+    create_before_destroy = true
+  }
+
+}
+
+output "api_url" {
+  value = "${aws_api_gateway_deployment.hello_world_api_deployment.invoke_url}/${aws_api_gateway_resource.hello_world_resource.path_part}"
+}

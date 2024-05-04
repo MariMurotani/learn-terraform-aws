@@ -1,13 +1,4 @@
-import json
+import sys
 
-def lambda_handler(event, context):
-    # TODO implement
-    print(event)
-    print(context)
-    
-    return {
-        'statusCode': 200,
-        'originalEvent': event,
-        'context': context,
-        'body': json.dumps('Hello from Lambda!')
-    }
+def handler(event, context):
+    return 'Hello from AWS Lambda using Python' + sys.version + '!'
