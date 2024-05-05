@@ -1,4 +1,8 @@
 import sys
 
 def handler(event, context):
-    return 'Hello from AWS Lambda using Python' + sys.version + '!'
+    output = {
+        "message": 'Hello from AWS Lambda using Python' + sys.version + '!',
+        "body": event["key1"]
+    }
+    return output
