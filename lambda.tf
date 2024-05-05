@@ -22,19 +22,37 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
+// Dockerコンテナ用のECRリポジトリを作成
+resource "aws_ecr_repository" "hello_world_function" {
+  name                 = "hello-world-function"  # Name of the repository
+  image_tag_mutability = "MUTABLE"               # or "IMMUTABLE" depending on your requirements
+
+  image_scanning_configuration {
+    scan_on_push = true  # Enable scanning of images on push
+  }  
+}
+
+
+output "ecr_repository_url" {
+  value = aws_ecr_repository.hello_world_function.repository_url
+  description = "The URL of the ECR repository, run 'docker tag docker-image:$your_image $repository_url'"
+}
+
+// lambdaにECRを設定
 resource "aws_lambda_function" "hello_world" {
   function_name = "HelloWorldViaTerraform"
-  handler       = "lambda_function.lambda_handler"
-  runtime       = "python3.10"
   memory_size   = 128
   timeout       = 3
 
   # For S3 zip package
+  #handler       = "lambda_function.lambda_handler"
+  #runtime       = "python3.10"
   #s3_bucket = aws_s3_bucket.lambda_code_bucket.bucket
   #s3_key    = "hello_world_function.zip"
+  #role = aws_iam_role.lambda_role.arn
 
   package_type  = "Image"
-  image_uri     = "111122223333.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest" # fix me
+  image_uri     = "${aws_ecr_repository.hello_world_function.repository_url}:latest" # ECSリポジトリと関連付け
 
   role = aws_iam_role.lambda_role.arn
 
@@ -48,7 +66,6 @@ resource "aws_lambda_function" "hello_world" {
     }
   }
 }
-
 
 // API Gatewayとの連携サンプル
 resource "aws_lambda_permission" "api_gateway_permission" {

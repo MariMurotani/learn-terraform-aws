@@ -1,5 +1,5 @@
-
-FROM public.ecr.aws/lambda/python:3.12
+# NOTE: https://qiita.com/takurot/items/fd797caf8a2a830916bc
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
 
 # Copy requirements.txt
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
