@@ -25,8 +25,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 // Dockerコンテナ用のECRリポジトリを作成
 resource "aws_ecr_repository" "hello_world_function" {
   name                 = "hello-world-function"  # Name of the repository
-  image_tag_mutability = "MUTABLE"               # or "IMMUTABLE" depending on your requirements
-
+  
   image_scanning_configuration {
     scan_on_push = true  # Enable scanning of images on push
   }  
